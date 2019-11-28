@@ -223,7 +223,7 @@ else:
     print('Final Score P2 (' + str(strategies.get(strategy_b)) + '): ',
           scores_b[-1])
 print('')
-
+print(strategies)
 
 
 
