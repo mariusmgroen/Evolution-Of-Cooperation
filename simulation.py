@@ -81,6 +81,10 @@ strategies = {'A': 'Always Cooperate',
               'B': 'Alwys Defect',
               'C': 'Play Random',
               'D': 'Tit for Tat'}
+legit_strategies = []
+for key in strategies.keys():
+    legit_strategies.append(key)
+    legit_strategies.append(key.lower())
 # ------------------------------------------------------------------------------
 
 
@@ -101,15 +105,12 @@ while choose_intro:
 # Choose first strategy
 choose_strategy_a = True
 while choose_strategy_a:
-    # Let user choose strategies                                                // Replace this with dict?
+    # Let user choose strategies
     print('\n')
-    print(' [A] Always Cooperate')
-    print(' [B] Always Defect')
-    print(' [C] Play Random')
-    print(' [D] Tit for Tat')
+    for key, value in strategies.items():
+        print(' [' + key + ']', value)
     strategy_a = input('Choose the first strategy: ')
-    legit_strategy_a = ['A', 'B', 'C', 'D', 'a', 'b', 'c', 'd']
-    if strategy_a in legit_strategy_a:
+    if strategy_a in legit_strategies:
         strategy_a = strategy_a.capitalize()
         choose_strategy_a = False
     else:
@@ -119,15 +120,12 @@ while choose_strategy_a:
 # Choose second strategy
 choose_strategy_b = True
 while choose_strategy_b:
-    # Let user choose strategies                                                // Replace this with dict?
+    # Let user choose strategies
     print('\n')
-    print(' [A] Always cooperate')
-    print(' [B] Always defect')
-    print(' [C] Play Random')
-    print(' [D] Tit for Tat')
+    for key, value in strategies.items():
+        print(' [' + key + ']', value)
     strategy_b = input('Choose the second strategy: ')
-    legit_strategy_b = ['A', 'B', 'C', 'D', 'a', 'b', 'c', 'd']
-    if strategy_b in legit_strategy_b:
+    if strategy_b in legit_strategies:
         strategy_b = strategy_b.capitalize()
         choose_strategy_b = False
     else:
@@ -223,7 +221,6 @@ else:
     print('Final Score P2 (' + str(strategies.get(strategy_b)) + '): ',
           scores_b[-1])
 print('')
-print(strategies)
 
 
 
