@@ -25,6 +25,9 @@ def strat_TFT(round, decisions):
         opp_decision_before = decisions[round-1]
         ai_decision = str(opp_decision_before)
     return ai_decision
+def strat_RESENT():
+    ai_decision = 'C'                                                           # Update!
+    return ai_decision
 # ------------------------------------------------------------------------------
 def simulate_round(strategy_a, strategy_b):
     if strategy_a=='A':
@@ -35,6 +38,8 @@ def simulate_round(strategy_a, strategy_b):
         decision_a = strat_RAND()
     elif strategy_a=='D':
         decision_a = strat_TFT(round, decisions_b)
+    elif strategy_a=='E':
+        decision_a = strat_RESENT()
 
     if strategy_b=='A':
         decision_b = strat_C()
@@ -44,6 +49,8 @@ def simulate_round(strategy_a, strategy_b):
         decision_b = strat_RAND()
     elif strategy_b=='D':
         decision_b = strat_TFT(round, decisions_a)
+    elif strategy_b=='E':
+        decision_b = strat_RESENT()
 
     return decision_a, decision_b
 # ------------------------------------------------------------------------------
@@ -78,9 +85,10 @@ def update_score(decision_a, decision_b, scores_a, scores_b, round):
 # ------------------------------------------------------------------------------
 # Create a dictionary with all strategies
 strategies = {'A': 'Always Cooperate',
-              'B': 'Alwys Defect',
+              'B': 'Always Defect',
               'C': 'Play Random',
-              'D': 'Tit for Tat'}
+              'D': 'Tit for Tat',
+              'E': 'Resentful'}
 legit_strategies = []
 for key in strategies.keys():
     legit_strategies.append(key)
@@ -114,7 +122,7 @@ while choose_strategy_a:
         strategy_a = strategy_a.capitalize()
         choose_strategy_a = False
     else:
-        print('You have to choose from A, B, C, or D!')
+        print('You have to choose from A, B, C, or D!')                         # Use dict keys
 
 
 # Choose second strategy
@@ -129,7 +137,7 @@ while choose_strategy_b:
         strategy_b = strategy_b.capitalize()
         choose_strategy_b = False
     else:
-        print('You have to choose from A, B, C, or D!')
+        print('You have to choose from A, B, C, or D!')                         # Use dict keys
 
 
 # Define number of rounds
