@@ -243,3 +243,21 @@ print('')
 
 
 # ------------------------------------------------------------------------------
+# To Do:
+#
+# - "Keep Playing?"
+#   Implementation of a while-loop in which the program does not
+#   terminate after each run of a single round
+#
+# - Menu
+#   Add a game menu in which the player can choose between playing
+#   multiple sessions with choosen strategies OR let the arena/all vs all
+#   start
+#
+# - All vs all
+#   Implementation of "Let all strategies work against each other"
+#
+# - Emergent Phenomena
+#   Evolution of Generations: less succesfull strategies need to be
+#   replaced by the most succesfull ones.
+#
