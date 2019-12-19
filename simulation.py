@@ -5,30 +5,48 @@ import os
 
 
 # ------------------------------------------------------------------------------
+# Define the Strategies, which can compete
+#  Each strategy is a method which returns the strategies decision
+#  (aka ai_decision), which is represented as a string of C or D.
 def strat_C():
+    # Always cooperate
     ai_decision = 'C'
     return ai_decision
 
 def strat_D():
+    # Always defect
     ai_decision = 'D'
     return ai_decision
 
 def strat_RAND():
+    # Choose randomly between cooperation and defection
     decisions = ['C', 'D']
     ai_decision = random.choice(decisions)
     return ai_decision
 
 def strat_TFT(round, decisions):
+    # Play "tit for tat"; start with cooperation and then mirror
+    #                     the opponent's last move
     if round==0:
         ai_decision = 'C'
     else:
         opp_decision_before = decisions[round-1]
         ai_decision = str(opp_decision_before)
     return ai_decision
-def strat_RESENT():
-    ai_decision = 'C'                                                           # Update!
+
+def strat_RESENT(round, decisions):
+    # Always cooperate until the opponent defects the first time
+    # from then on, always defect
+    if round==0:
+        ai_decision = 'C'
+    else:
+        if 'D' in decisions:
+            ai_decision = 'D'
+        else:
+            ai_decision = 'C'
     return ai_decision
 # ------------------------------------------------------------------------------
+# Define choosen strategies being the strategies defined above
 def simulate_round(strategy_a, strategy_b):
     if strategy_a=='A':
         decision_a = strat_C()
@@ -39,7 +57,7 @@ def simulate_round(strategy_a, strategy_b):
     elif strategy_a=='D':
         decision_a = strat_TFT(round, decisions_b)
     elif strategy_a=='E':
-        decision_a = strat_RESENT()
+        decision_a = strat_RESENT(round, decisions_b)
 
     if strategy_b=='A':
         decision_b = strat_C()
@@ -50,7 +68,7 @@ def simulate_round(strategy_a, strategy_b):
     elif strategy_b=='D':
         decision_b = strat_TFT(round, decisions_a)
     elif strategy_b=='E':
-        decision_b = strat_RESENT()
+        decision_b = strat_RESENT(round, decisions_a)
 
     return decision_a, decision_b
 # ------------------------------------------------------------------------------
@@ -94,6 +112,12 @@ for key in strategies.keys():
     legit_strategies.append(key)
     legit_strategies.append(key.lower())
 # ------------------------------------------------------------------------------
+# Create a dictionary with all modes
+modes = {'1': 'Play Matchups',
+         '2': 'Simulate Evolution',
+         '3': 'Help!'}
+legit_modes = list(modes.keys())
+# ------------------------------------------------------------------------------
 
 
 # Run Header/Manual before
@@ -110,129 +134,199 @@ while choose_intro:
         print('Please enter (y) or (n).')
 
 
-# Choose first strategy
-choose_strategy_a = True
-while choose_strategy_a:
-    # Let user choose strategies
+# ------------------------------------------------------------------------------
+# Complete Loop
+play_on = True
+while play_on:
+
+    # Start menu in which the player can
+    # choose the mode of the game
+    #  Create booleans for each mode
+    play_manual = False
+    play_simulation = False
+    play_help = False
+
+    #  activate boolean of chosen mode
     print('\n')
-    for key, value in strategies.items():
+    print('The following modes are available for you:')
+    for key, value in modes.items():
         print(' [' + key + ']', value)
-    strategy_a = input('Choose the first strategy: ')
-    if strategy_a in legit_strategies:
-        strategy_a = strategy_a.capitalize()
-        choose_strategy_a = False
+    chosen_mode = input('Choose mode: ')
+    if chosen_mode == '1':
+        play_manual = True
+    elif chosen_mode == '2':
+        play_simulation = True
+    elif chosen_mode == '3':
+        play_help = True
     else:
-        print('You have to choose from A, B, C, or D!')                         # Use dict keys
+        print('You have to choose from:', legit_modes)
+
+    # --------------------------------------------------------------------------
+    # Manual simulation of single rounds of user-choosen strategies
+    while play_manual:
+        # Choose first strategy
+        choose_strategy_a = True
+        while choose_strategy_a:
+            # Let user choose strategies
+            print('\n')
+            print('The following strategies are available for you:')
+            for key, value in strategies.items():
+                print(' [' + key + ']', value)
+            strategy_a = input('Choose the first strategy: ')
+            if strategy_a in legit_strategies:
+                strategy_a = strategy_a.capitalize()
+                choose_strategy_a = False
+            else:
+                print('You have to choose from:', list(strategies.keys()))
 
 
-# Choose second strategy
-choose_strategy_b = True
-while choose_strategy_b:
-    # Let user choose strategies
-    print('\n')
-    for key, value in strategies.items():
-        print(' [' + key + ']', value)
-    strategy_b = input('Choose the second strategy: ')
-    if strategy_b in legit_strategies:
-        strategy_b = strategy_b.capitalize()
-        choose_strategy_b = False
-    else:
-        print('You have to choose from A, B, C, or D!')                         # Use dict keys
+        # Choose second strategy
+        choose_strategy_b = True
+        while choose_strategy_b:
+            # Let user choose strategies
+            print('\n')
+            for key, value in strategies.items():
+                print(' [' + key + ']', value)
+            strategy_b = input('Choose the second strategy: ')
+            if strategy_b in legit_strategies:
+                strategy_b = strategy_b.capitalize()
+                choose_strategy_b = False
+            else:
+                print('You have to choose from:', list(strategies.keys()))
 
 
-# Define number of rounds
-choose_min_rounds = True
-while choose_min_rounds:
-    min_nr_of_rounds = input('\nMinimum number of rounds: ')
-    try:
-        min_nr_of_rounds = int(min_nr_of_rounds)
-        if min_nr_of_rounds > 0:
-            choose_min_rounds = False
+        # Define number of rounds
+        choose_min_rounds = True
+        while choose_min_rounds:
+            min_nr_of_rounds = input('\nMinimum number of rounds: ')
+            try:
+                min_nr_of_rounds = int(min_nr_of_rounds)
+                if min_nr_of_rounds > 0:
+                    choose_min_rounds = False
+                else:
+                    print('Enter an integer greater zero!')
+            except:
+                print('Enter an integer greater zero!')
+
+        choose_max_rounds = True
+        while choose_max_rounds:
+            max_nr_of_rounds = input('\nMaximum number of rounds: ')
+            try:
+                max_nr_of_rounds = int(max_nr_of_rounds)
+                if max_nr_of_rounds >= min_nr_of_rounds:
+                    choose_max_rounds = False
+                else:
+                    print('Maximum needs to be larger than the minimum!')
+            except:
+                print('Enter an integer!')
+
+        #min_nr_of_rounds = 1
+        #max_nr_of_rounds = 2
+
+        nr_of_rounds = random.randint(min_nr_of_rounds, max_nr_of_rounds)
+
+
+        # Show the simulated rounds
+        decisions_a = []
+        decisions_b = []
+        scores_a = [0]
+        scores_b = [0]
+        if nr_of_rounds==1:
+            print('\n | Simulating', nr_of_rounds, 'round...')
         else:
-            print('Enter an integer greater zero!')
-    except:
-        print('Enter an integer greater zero!')
+            print('\n | Simulating', nr_of_rounds, 'rounds...')
+        print(' |  Player 1:', strategies.get(strategy_a))
+        print(' |  Player 2:', strategies.get(strategy_b))
+        print(' |')
+        print(' |        P1   P2    .  Payoff')
+        print(' | ------------------|--------')
+        for round in range(nr_of_rounds):
+            decision_a, decision_b = simulate_round(strategy_a, strategy_b)
+            decisions_a.append(decision_a)
+            decisions_b.append(decision_b)
+            scores_a, scores_b, situation = update_score(decision_a,
+                                                         decision_b,
+                                                         scores_a,
+                                                         scores_b,
+                                                         round)
+            if round < 9:
+                print(' |  [' + str(round+1) + ']   ', decision_a, '  ',
+                                                       decision_b, '   | ',
+                                                       situation[0], '',
+                                                       situation[1])
+            elif round < 99:
+                print(' |  [' + str(round+1) + ']  ', decision_a, '  ',
+                                                      decision_b, '   | ',
+                                                      situation[0], '',
+                                                      situation[1])
+            else:
+                print(' |  [' + str(round+1) + '] ', decision_a, '  ',
+                                                     decision_b, '   | ',
+                                                     situation[0], '',
+                                                     situation[1])
+            time.sleep(0.5)
+        print('')
 
-choose_max_rounds = True
-while choose_max_rounds:
-    max_nr_of_rounds = input('\nMaximum number of rounds: ')
-    try:
-        max_nr_of_rounds = int(max_nr_of_rounds)
-        if max_nr_of_rounds >= min_nr_of_rounds:
-            choose_max_rounds = False
+        length_strategy_a = len(str(strategies.get(strategy_a)))
+        length_strategy_b = len(str(strategies.get(strategy_b)))
+        if length_strategy_a > length_strategy_b:
+            difference = length_strategy_a - length_strategy_b
+            print('Final Score P1 (' + str(strategies.get(strategy_a)) + '): ',
+                  scores_a[-1])
+            print('Final Score P2 (' + str(strategies.get(strategy_b)) + '):',
+                  difference * ' ',
+                  scores_b[-1])
         else:
-            print('Maximum needs to be larger than the minimum!')
-    except:
-        print('Enter an integer!')
+            difference = length_strategy_b - length_strategy_a
+            print('Final Score P1 (' + str(strategies.get(strategy_a)) + '):',
+                  difference * ' ',
+                  scores_a[-1])
+            print('Final Score P2 (' + str(strategies.get(strategy_b)) + '): ',
+                  scores_b[-1])
+        print('')
 
-#min_nr_of_rounds = 1
-#max_nr_of_rounds = 2
+        # Choose to play another game
+        choose_play_on = True
+        while choose_play_on:
+            chosen_play_on = input('Do you want to play another round? (y/n) ')
+            if chosen_play_on == 'y':
+                choose_play_on = False
+            elif chosen_play_on == 'n':
+                print('You have chosen to end the game.\n')
+                choose_play_on = False
+                play_manual = False
+                play_on = False
+            else:
+                print('You have to choose between yes (y) and no (n)!\n')
 
-nr_of_rounds = random.randint(min_nr_of_rounds, max_nr_of_rounds)
+    # --------------------------------------------------------------------------
+    # Simulation
+    while play_simulation:
 
+        print('\nSimulation still under construction.\n')                       # Insert simulation code here!
 
-# Show the simulated rounds
-decisions_a = []
-decisions_b = []
-scores_a = [0]
-scores_b = [0]
-if nr_of_rounds==1:
-    print('\n | Simulating', nr_of_rounds, 'round...')
-else:
-    print('\n | Simulating', nr_of_rounds, 'rounds...')
-print(' |  Player 1:', strategies.get(strategy_a))
-print(' |  Player 2:', strategies.get(strategy_b))
-print(' |')
-print(' |        P1   P2    .  Payoff')
-print(' | ------------------|--------')
-for round in range(nr_of_rounds):
-    decision_a, decision_b = simulate_round(strategy_a, strategy_b)
-    decisions_a.append(decision_a)
-    decisions_b.append(decision_b)
-    scores_a, scores_b, situation = update_score(decision_a,
-                                                 decision_b,
-                                                 scores_a,
-                                                 scores_b,
-                                                 round)
-    if round < 9:
-        print(' |  [' + str(round+1) + ']   ', decision_a, '  ',
-                                               decision_b, '   | ',
-                                               situation[0], '',
-                                               situation[1])
-    elif round < 99:
-        print(' |  [' + str(round+1) + ']  ', decision_a, '  ',
-                                              decision_b, '   | ',
-                                              situation[0], '',
-                                              situation[1])
-    else:
-        print(' |  [' + str(round+1) + '] ', decision_a, '  ',
-                                             decision_b, '   | ',
-                                             situation[0], '',
-                                             situation[1])
-    time.sleep(0.5)
-print('')
+        # Choose to play another game
+        choose_play_on = True
+        while choose_play_on:
+            chosen_play_on = input('Do you want to simulate another round? (y/n) ')
+            if chosen_play_on == 'y':
+                choose_play_on = False
+            elif chosen_play_on == 'n':
+                print('You have chosen to end the simulation.\n')
+                choose_play_on = False
+                play_simulation = False
+                play_on = False
+            else:
+                print('You have to choose between yes (y) and no (n)!\n')
 
-length_strategy_a = len(str(strategies.get(strategy_a)))
-length_strategy_b = len(str(strategies.get(strategy_b)))
-if length_strategy_a > length_strategy_b:
-    difference = length_strategy_a - length_strategy_b
-    print('Final Score P1 (' + str(strategies.get(strategy_a)) + '): ',
-          scores_a[-1])
-    print('Final Score P2 (' + str(strategies.get(strategy_b)) + '):',
-          difference * ' ',
-          scores_b[-1])
-else:
-    difference = length_strategy_b - length_strategy_a
-    print('Final Score P1 (' + str(strategies.get(strategy_a)) + '):',
-          difference * ' ',
-          scores_a[-1])
-    print('Final Score P2 (' + str(strategies.get(strategy_b)) + '): ',
-          scores_b[-1])
-print('')
-
-
-
-
+    # --------------------------------------------------------------------------
+    # Help / Information
+    while play_help:
+        print('\nHelp still under construction.\n')                             # Insert help code here!
+        input('Press Enter to return to the menu.')
+        print('Returning to menu...')
+        time.sleep(2)
+        play_help = False
 
 
 
@@ -245,17 +339,16 @@ print('')
 # ------------------------------------------------------------------------------
 # To Do:
 #
-# - "Keep Playing?"
-#   Implementation of a while-loop in which the program does not
-#   terminate after each run of a single round
-#
 # - Menu
 #   Add a game menu in which the player can choose between playing
 #   multiple sessions with choosen strategies OR let the arena/all vs all
 #   start
 #
-# - All vs all
+# - All vs all / Simulation (Menu: 2)
 #   Implementation of "Let all strategies work against each other"
+#
+# - Help (Menu: 3)
+#   Implementation of Help / Information
 #
 # - Emergent Phenomena
 #   Evolution of Generations: less succesfull strategies need to be
