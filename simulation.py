@@ -7,7 +7,7 @@ import os
 # ------------------------------------------------------------------------------
 # Define the Strategies, which can compete
 #  Each strategy is a method which returns the strategies decision
-#  (aka ai_decision), which is represented as a string of C or D.
+#  (aka "ai_decision"), which is represented as a string of C or D.
 def strat_C():
     # Always cooperate
     ai_decision = 'C'
@@ -36,7 +36,7 @@ def strat_TFT(round, decisions):
 
 def strat_RESENT(round, decisions):
     # Always cooperate until the opponent defects the first time
-    # from then on, always defect
+    # from then on, always defects
     if round==0:
         ai_decision = 'C'
     else:
@@ -45,6 +45,8 @@ def strat_RESENT(round, decisions):
         else:
             ai_decision = 'C'
     return ai_decision
+
+
 # ------------------------------------------------------------------------------
 # Define choosen strategies being the strategies defined above
 def simulate_round(strategy_a, strategy_b):
@@ -71,8 +73,11 @@ def simulate_round(strategy_a, strategy_b):
         decision_b = strat_RESENT(round, decisions_a)
 
     return decision_a, decision_b
+
+
 # ------------------------------------------------------------------------------
 # Define the updating of the score after each round
+# This are the payoffs of each combination
 reward = 3
 temptation = 5
 sucker = 0
@@ -100,6 +105,8 @@ def update_score(decision_a, decision_b, scores_a, scores_b, round):
         situation = ('+' + str(penalty), '+' + str(penalty))
 
     return scores_a, scores_b, situation
+
+
 # ------------------------------------------------------------------------------
 # Create a dictionary with all strategies
 strategies = {'A': 'Always Cooperate',
@@ -111,15 +118,17 @@ legit_strategies = []
 for key in strategies.keys():
     legit_strategies.append(key)
     legit_strategies.append(key.lower())
+
+
 # ------------------------------------------------------------------------------
 # Create a dictionary with all modes
 modes = {'1': 'Play Matchups',
          '2': 'Simulate Evolution',
          '3': 'Help!'}
 legit_modes = list(modes.keys())
+
+
 # ------------------------------------------------------------------------------
-
-
 # Run Header/Manual before
 choose_intro = True
 while choose_intro:
@@ -160,6 +169,7 @@ while play_on:
         play_help = True
     else:
         print('You have to choose from:', legit_modes)
+
 
     # --------------------------------------------------------------------------
     # Manual simulation of single rounds of user-choosen strategies
@@ -219,9 +229,6 @@ while play_on:
                     print('Maximum needs to be larger than the minimum!')
             except:
                 print('Enter an integer!')
-
-        #min_nr_of_rounds = 1
-        #max_nr_of_rounds = 2
 
         nr_of_rounds = random.randint(min_nr_of_rounds, max_nr_of_rounds)
 
@@ -299,6 +306,7 @@ while play_on:
             else:
                 print('You have to choose between yes (y) and no (n)!\n')
 
+
     # --------------------------------------------------------------------------
     # Simulation
     while play_simulation:
@@ -308,6 +316,37 @@ while play_on:
         # Choose to play another game
         choose_play_on = True
         while choose_play_on:
+
+            class SimulatedPlayer:
+                #def __init__(self, sim_strategy, sim_score):
+                #    self.sim_strategy = sim_strategy
+                #    self.sim_score = sim_score
+                def __init__(self, sim_strategy):
+                    self.sim_strategy = sim_strategy
+
+
+            # Let user choose which strategies/how many players per strategy
+            # participate in the simulation
+            print('How many players of each strategy shall take place',
+                  'in the tournament?')
+            strategies_to_simulate = dict()
+            for key, value in strategies.items():
+                i = int(input(' [{0}] {1:20s}'.format(str(key),
+                                                      str(value))))
+                strategies_to_simulate[value] = i
+
+            print(strategies_to_simulate)                                       # Delete Control !
+            print(sum(strategies_to_simulate.values()))                         # Delete Control !
+
+            simulated_players = []
+            for key, value in strategies_to_simulate.items():
+                for _ in range(value):
+                    simulated_players.append(SimulatedPlayer(key))
+            for i in range(len(simulated_players)):
+                print('Player ' + str(i+1) + ') ', simulated_players[i].sim_strategy)
+
+
+
             chosen_play_on = input('Do you want to simulate another round? (y/n) ')
             if chosen_play_on == 'y':
                 choose_play_on = False
@@ -319,13 +358,14 @@ while play_on:
             else:
                 print('You have to choose between yes (y) and no (n)!\n')
 
+
     # --------------------------------------------------------------------------
     # Help / Information
     while play_help:
         print('\nHelp still under construction.\n')                             # Insert help code here!
         input('Press Enter to return to the menu.')
         print('Returning to menu...')
-        time.sleep(2)
+        time.sleep(1)
         play_help = False
 
 
@@ -338,11 +378,6 @@ while play_on:
 
 # ------------------------------------------------------------------------------
 # To Do:
-#
-# - Menu
-#   Add a game menu in which the player can choose between playing
-#   multiple sessions with choosen strategies OR let the arena/all vs all
-#   start
 #
 # - All vs all / Simulation (Menu: 2)
 #   Implementation of "Let all strategies work against each other"
