@@ -3,6 +3,10 @@ import random
 import time
 import os
 
+# Change Directory (so that header.py runs)
+dir = os.path.dirname(os.path.realpath(__file__))
+os.chdir(dir)
+
 
 # ------------------------------------------------------------------------------
 # Define the Strategies, which can compete
