@@ -128,7 +128,8 @@ for key in strategies.keys():
 # Create a dictionary with all modes
 modes = {'1': 'Play Matchups',
          '2': 'Simulate Evolution',
-         '3': 'Help!'}
+         '3': 'Help!',
+         '4': 'Quit'}
 legit_modes = list(modes.keys())
 
 
@@ -171,6 +172,8 @@ while play_on:
         play_simulation = True
     elif chosen_mode == '3':
         play_help = True
+    elif chosen_mode == '4':
+        play_on = False
     else:
         print('You have to choose from:', legit_modes)
 
@@ -367,12 +370,43 @@ while play_on:
     # Help / Information
     while play_help:
         print('\nHelp still under construction.\n')                             # Insert help code here!
-        input('Press Enter to return to the menu.')
+
+        from colorama import Fore                                               # Test of help text
+        from colorama import Style
+        for _ in range(25):
+            print('')
+        print(f'{Fore.GREEN}DESCRIPTION{Style.RESET_ALL}')
+        print('\tExplain what PD is.')
+        print('')
+        print(f'{Fore.GREEN}GAME MODES{Style.RESET_ALL}')
+        print('\tWhat does [Play Matchups] do?')
+        print('\tWhat does [Simulate Evolution] do?')
+        print('')
+        print(f'{Fore.GREEN}RULES{Style.RESET_ALL}')
+        print('\tWhat is the matrix of payouts?')
+
+        print('\t+--------------------+---------------------------------------------+')
+        print('\t|                    |                Column Player                |')
+        print('\t|                    |----------------------+----------------------+')
+        print('\t|                    |       Cooperate      |        Defect        |')
+        print('\t|                    |                      |                      |')
+        print('\t|                    |                      |                      |')
+        print('\t+--------+-----------+----------------------+----------------------+')
+        print('\t|        | Cooperate |       R=3, R=3       |       S=0, T=5       |')
+        print('\t|   Row  |           |                      |                      |')
+        print('\t| Player |           |      Reward for      | Sucker\'s payoff, and |')
+        print('\t|        |           |  mutual cooperation  | temptation to defect |')
+        print('\t+--------+-----------+----------------------+----------------------+')
+        print('\t|        | Defect    |       T=5, S=0       |       P=1, P=1       |')
+        print('\t|        |           |                      |                      |')
+        print('\t|        |           | Temptation to defect |    Punishment for    |')
+        print('\t|        |           |  and sucker\'s payoff |   mutual defection   |')
+        print('\t+--------+-----------+----------------------+----------------------+')
+
+        input('\nPress Enter to return to the menu.\n')
         print('Returning to menu...')
         time.sleep(1)
         play_help = False
-
-
 
 
 
