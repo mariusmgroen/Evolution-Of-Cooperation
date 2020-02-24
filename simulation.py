@@ -335,7 +335,7 @@ while play_on:
                     self.score.append(payoff)
 
                 def show_score(self):
-                    return sum(self.score)
+                    return self.score
 
                 def update_decisions_own(self, decisions):
                     self.decisions_own.append(decisions)
@@ -463,12 +463,15 @@ while play_on:
 # To Do:
 #
 # - All vs all / Simulation (Menu: 2)
-#   Implementation of "Let all strategies work against each other"
+#    . Define number of players (and type)
+#      based on user input
+#    . Inheritance; how do strategies adapt to success of others?
+#
+# - Export Results
+#    of simulation of rounds as a csv (?)
 #
 # - Help (Menu: 3)
-#   Implementation of Help / Information
-#
-# - Emergent Phenomena
-#   Evolution of Generations: less succesfull strategies need to be
-#   replaced by the most succesfull ones.
+#    Implementation of Help / Information
+#    Export Help menu to separate .py-file
+#    which is loaded/imported when requested
 #
