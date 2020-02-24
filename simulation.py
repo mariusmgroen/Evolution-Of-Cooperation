@@ -2,6 +2,7 @@
 import random
 import time
 import os
+from itertools import combinations
 
 # Change Directory (so that header.py runs)
 dir = os.path.dirname(os.path.realpath(__file__))
@@ -28,20 +29,20 @@ def strat_RAND():
     ai_decision = random.choice(decisions)
     return ai_decision
 
-def strat_TFT(round, decisions):
+def strat_TFT(nr_round, decisions):
     # Play "tit for tat"; start with cooperation and then mirror
     #                     the opponent's last move
-    if round==0:
+    if nr_round==0:
         ai_decision = 'C'
     else:
-        opp_decision_before = decisions[round-1]
+        opp_decision_before = decisions[nr_round-1]
         ai_decision = str(opp_decision_before)
     return ai_decision
 
-def strat_RESENT(round, decisions):
+def strat_RESENT(nr_round, decisions):
     # Always cooperate until the opponent defects the first time
     # from then on, always defects
-    if round==0:
+    if nr_round==0:
         ai_decision = 'C'
     else:
         if 'D' in decisions:
@@ -53,7 +54,7 @@ def strat_RESENT(round, decisions):
 
 # ------------------------------------------------------------------------------
 # Define choosen strategies being the strategies defined above
-def simulate_round(strategy_a, strategy_b):
+def simulate_round(strategy_a, strategy_b, decisions_a, decisions_b, nr_round):
     if strategy_a=='A':
         decision_a = strat_C()
     elif strategy_a=='B':
@@ -61,9 +62,9 @@ def simulate_round(strategy_a, strategy_b):
     elif strategy_a=='C':
         decision_a = strat_RAND()
     elif strategy_a=='D':
-        decision_a = strat_TFT(round, decisions_b)
+        decision_a = strat_TFT(nr_round, decisions_b)
     elif strategy_a=='E':
-        decision_a = strat_RESENT(round, decisions_b)
+        decision_a = strat_RESENT(nr_round, decisions_b)
 
     if strategy_b=='A':
         decision_b = strat_C()
@@ -72,9 +73,9 @@ def simulate_round(strategy_a, strategy_b):
     elif strategy_b=='C':
         decision_b = strat_RAND()
     elif strategy_b=='D':
-        decision_b = strat_TFT(round, decisions_a)
+        decision_b = strat_TFT(nr_round, decisions_a)
     elif strategy_b=='E':
-        decision_b = strat_RESENT(round, decisions_a)
+        decision_b = strat_RESENT(nr_round, decisions_a)
 
     return decision_a, decision_b
 
@@ -87,25 +88,25 @@ temptation = 5
 sucker = 0
 penalty = 1
 
-def update_score(decision_a, decision_b, scores_a, scores_b, round):
+def update_score(decision_a, decision_b, scores_a, scores_b, nr_round):
     if decision_a=='C' and decision_b=='C':
-        scores_a.append(scores_a[round] + reward)
-        scores_b.append(scores_b[round] + reward)
+        scores_a.append(scores_a[nr_round] + reward)
+        scores_b.append(scores_b[nr_round] + reward)
         situation = ('+' + str(reward), '+' + str(reward))
 
     elif decision_a=='C' and decision_b=='D':
-        scores_a.append(scores_a[round] + sucker)
-        scores_b.append(scores_b[round] + temptation)
+        scores_a.append(scores_a[nr_round] + sucker)
+        scores_b.append(scores_b[nr_round] + temptation)
         situation = ('  ', '+' + str(temptation))
 
     elif decision_a=='D' and decision_b=='C':
-        scores_a.append(scores_a[round] + temptation)
-        scores_b.append(scores_b[round] + sucker)
+        scores_a.append(scores_a[nr_round] + temptation)
+        scores_b.append(scores_b[nr_round] + sucker)
         situation = ('+' + str(temptation), '  ')
 
     elif decision_a=='D' and decision_b=='D':
-        scores_a.append(scores_a[round] + penalty)
-        scores_b.append(scores_b[round] + penalty)
+        scores_a.append(scores_a[nr_round] + penalty)
+        scores_b.append(scores_b[nr_round] + penalty)
         situation = ('+' + str(penalty), '+' + str(penalty))
 
     return scores_a, scores_b, situation
@@ -254,30 +255,30 @@ while play_on:
         print(' |')
         print(' |        P1   P2    .  Payoff')
         print(' | ------------------|--------')
-        for round in range(nr_of_rounds):
-            decision_a, decision_b = simulate_round(strategy_a, strategy_b)
+        for nr_round in range(nr_of_rounds):
+            decision_a, decision_b = simulate_round(strategy_a, strategy_b, decisions_a, decisions_b, nr_round)
             decisions_a.append(decision_a)
             decisions_b.append(decision_b)
             scores_a, scores_b, situation = update_score(decision_a,
                                                          decision_b,
                                                          scores_a,
                                                          scores_b,
-                                                         round)
-            if round < 9:
-                print(' |  [' + str(round+1) + ']   ', decision_a, '  ',
-                                                       decision_b, '   | ',
-                                                       situation[0], '',
-                                                       situation[1])
-            elif round < 99:
-                print(' |  [' + str(round+1) + ']  ', decision_a, '  ',
-                                                      decision_b, '   | ',
-                                                      situation[0], '',
-                                                      situation[1])
+                                                         nr_round)
+            if nr_round < 9:
+                print(' |  [' + str(nr_round+1) + ']   ', decision_a, '  ',
+                                                          decision_b, '   | ',
+                                                          situation[0], '',
+                                                          situation[1])
+            elif nr_round < 99:
+                print(' |  [' + str(nr_round+1) + ']  ', decision_a, '  ',
+                                                         decision_b, '   | ',
+                                                         situation[0], '',
+                                                         situation[1])
             else:
-                print(' |  [' + str(round+1) + '] ', decision_a, '  ',
-                                                     decision_b, '   | ',
-                                                     situation[0], '',
-                                                     situation[1])
+                print(' |  [' + str(nr_round+1) + '] ', decision_a, '  ',
+                                                        decision_b, '   | ',
+                                                        situation[0], '',
+                                                        situation[1])
             time.sleep(0.5)
         print('')
 
@@ -309,7 +310,6 @@ while play_on:
                 print('You have chosen to end the game.\n')
                 choose_play_on = False
                 play_manual = False
-                play_on = False
             else:
                 print('You have to choose between yes (y) and no (n)!\n')
 
@@ -324,44 +324,86 @@ while play_on:
         choose_play_on = True
         while choose_play_on:
 
-            class SimulatedPlayer:
-                #def __init__(self, sim_strategy, sim_score):
-                #    self.sim_strategy = sim_strategy
-                #    self.sim_score = sim_score
-                def __init__(self, sim_strategy):
-                    self.sim_strategy = sim_strategy
+            class player:
+                def __init__(self, strat, score, decisions_own, decisions_opponent):
+                    self.strat = strat
+                    self.score = score
+                    self.decisions_own = decisions_own
+                    self.decisions_opponent = decisions_opponent
 
+                def update_score(self, payoff):
+                    self.score.append(payoff)
+
+                def show_score(self):
+                    return sum(self.score)
+
+                def update_decisions_own(self, decisions):
+                    self.decisions_own.append(decisions)
+
+                def update_strat(self, new_strat):
+                    self.strat = new_strat
+
+            player_1 = player('A', [], [], [])
+            player_2 = player('B', [], [], [])
+            player_3 = player('C', [], [], [])
+            player_4 = player('D', [], [], [])
+            player_5 = player('E', [], [], [])
+            players = [player_1, player_2, player_3, player_4, player_5]        # Create from useful input
+            player_pairs = list(combinations(players, 2))
+
+            for player_a, player_b in player_pairs:
+                print('\nR', player_a.strat, player_b.strat, '+ +')
+                player_a_decisions = []
+                player_b_decisions = []
+                player_a_score = [0]
+                player_b_score = [0]
+                for nr_round in range(10):
+                    player_a_decision, player_b_decision = simulate_round(player_a.strat, player_b.strat,
+                                                                          player_a_decisions, player_b_decisions,
+                                                                          nr_round)
+                    player_a_decisions.append(player_a_decision)
+                    player_b_decisions.append(player_b_decision)
+                    player_a_score, player_b_score, situation = update_score(player_a_decision,
+                                                                  player_b_decision,
+                                                                  player_a_score,
+                                                                  player_b_score,
+                                                                  nr_round)
+                    print(nr_round+1, player_a_decisions[nr_round], player_b_decisions[nr_round],
+                          player_a_score[nr_round+1], player_b_score[nr_round+1])
+                player_a.update_score(player_a_score)
+                player_b.update_score(player_b_score)
+                player_a.update_decisions_own(player_a_decisions)
+                player_b.update_decisions_own(player_b_decisions)
 
             # Let user choose which strategies/how many players per strategy
             # participate in the simulation
-            print('How many players of each strategy shall take place',
-                  'in the tournament?')
-            strategies_to_simulate = dict()
-            for key, value in strategies.items():
-                i = int(input(' [{0}] {1:20s}'.format(str(key),
-                                                      str(value))))
-                strategies_to_simulate[value] = i
-
-            print(strategies_to_simulate)                                       # Delete Control !
-            print(sum(strategies_to_simulate.values()))                         # Delete Control !
-
-            simulated_players = []
-            for key, value in strategies_to_simulate.items():
-                for _ in range(value):
-                    simulated_players.append(SimulatedPlayer(key))
-            for i in range(len(simulated_players)):
-                print('Player ' + str(i+1) + ') ', simulated_players[i].sim_strategy)
+#            print('How many players of each strategy shall take place',
+#                  'in the tournament?')
+#            strategies_to_simulate = dict()
+#            for key, value in strategies.items():
+#                i = int(input(' [{0}] {1:20s}'.format(str(key),
+#                                                      str(value))))
+#                strategies_to_simulate[value] = i
+#
+#            print(strategies_to_simulate)                                       # Delete Control !
+#            print(sum(strategies_to_simulate.values()))                         # Delete Control !
+#
+#            simulated_players = []
+#            for key, value in strategies_to_simulate.items():
+#                for _ in range(value):
+#                    simulated_players.append(SimulatedPlayer(key))
+#            for i in range(len(simulated_players)):
+#                print('Player ' + str(i+1) + ') ', simulated_players[i].sim_strategy)
 
 
 
             chosen_play_on = input('Do you want to simulate another round? (y/n) ')
-            if chosen_play_on == 'y':
+            if chosen_play_on == 'y' or chosen_play_on == 'Y':
                 choose_play_on = False
-            elif chosen_play_on == 'n':
+            elif chosen_play_on == 'n' or chosen_play_on == 'N':
                 print('You have chosen to end the simulation.\n')
                 choose_play_on = False
                 play_simulation = False
-                play_on = False
             else:
                 print('You have to choose between yes (y) and no (n)!\n')
 
@@ -402,6 +444,9 @@ while play_on:
         print('\t|        |           | Temptation to defect |    Punishment for    |')
         print('\t|        |           |  and sucker\'s payoff |   mutual defection   |')
         print('\t+--------+-----------+----------------------+----------------------+')
+
+        print(f'{Fore.GREEN}SOURCES{Style.RESET_ALL}')
+        print('\tAxelrod, R. (1984), The Evolution of Cooperation, Basic Books, NY.')
 
         input('\nPress Enter to return to the menu.\n')
         print('Returning to menu...')
