@@ -161,12 +161,24 @@ class player:
         self.strat = new_strat
 
 random.seed(420)
-player_1 = player('A', [], [], [])
-player_2 = player('A', [], [], [])
-player_3 = player('B', [], [], [])
-player_4 = player('C', [], [], [])
-players = [player_1, player_2, player_3, player_4]
-player_pairs = list(combinations(players, 2))
+print('How many players of each strategy shall take place',
+      'in the tournament?')
+strategies_to_simulate = dict()
+for key, value in strategies.items():
+    i = int(input(' [{0}] {1:20s}'.format(str(key),
+                                          str(value))))
+    strategies_to_simulate[key] = i
+# print(strategies_to_simulate)                                       # Delete Control !
+# print(sum(strategies_to_simulate.values()))                         # Delete Control !
+simulated_players = []
+for key, value in strategies_to_simulate.items():
+    for _ in range(value):
+        simulated_players.append(player(key, [], [], []))
+for i in range(len(simulated_players)):
+    print('Player ' + str(i+1) + ') ', simulated_players[i].strat)
+
+
+player_pairs = list(combinations(simulated_players, 2))
 
 for player_a, player_b in player_pairs:
     print('\nR |', player_a.strat, '', player_b.strat, ' +  +')
@@ -193,54 +205,16 @@ for player_a, player_b in player_pairs:
     player_b.update_decisions_own(player_b_decisions)
 
 
-print(player_1.score)
-p1_total_score = 0
-for sublist in player_1.score:
-    p1_total_score = p1_total_score + sublist[-1]
-print(p1_total_score)
-
-print(player_2.score)
-p2_total_score = 0
-for sublist in player_2.score:
-    p2_total_score = p2_total_score + sublist[-1]
-print(p2_total_score)
-
-print(player_3.score)
-p3_total_score = 0
-for sublist in player_3.score:
-    p3_total_score = p3_total_score + sublist[-1]
-print(p3_total_score)
-
-print(player_4.score)
-p4_total_score = 0
-for sublist in player_4.score:
-    p4_total_score = p4_total_score + sublist[-1]
-print(p4_total_score)
-
-print(player_1.show_total_score())
-print(player_2.show_total_score())
-print(player_3.show_total_score())
-print(player_4.show_total_score())
+print(simulated_players[0].show_total_score())
+print(simulated_players[1].show_total_score())
+print(simulated_players[2].show_total_score())
+print(simulated_players[3].show_total_score())
+#print(simulated_player[4].show_total_score())
 
 
 
 # Let user choose which strategies/how many players per strategy
 # participate in the simulation
-print('How many players of each strategy shall take place',
-      'in the tournament?')
-strategies_to_simulate = dict()
-for key, value in strategies.items():
-    i = int(input(' [{0}] {1:20s}'.format(str(key),
-                                          str(value))))
-    strategies_to_simulate[value] = i
-print(strategies_to_simulate)                                       # Delete Control !
-print(sum(strategies_to_simulate.values()))                         # Delete Control !
-simulated_players = []
-for key, value in strategies_to_simulate.items():
-    for _ in range(value):
-        simulated_players.append(player(key, [], [], []))
-for i in range(len(simulated_players)):
-    print('Player ' + str(i+1) + ') ', simulated_players[i].strat)
 
 
 
