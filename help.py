@@ -5,7 +5,6 @@ def printHelp():
 
         from colorama import Fore                                               # Test of help text
         from colorama import Style
-        import help
 
         #for _ in range(25): # Why??!
             #print('')
