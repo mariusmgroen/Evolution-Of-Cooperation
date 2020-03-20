@@ -140,11 +140,11 @@ choose_intro = True
 while choose_intro:
     intro = input('Do you want to see the intro? (y/n) ')
     if intro=='y':
-        choose_intro = False
-        os.system('python3 header.py')
+        choose_intro = False #?
+        os.system('python3 header.py') # Does not work (fwilhelm92)
     elif intro=='n':
         print('Ok... :(')
-        choose_intro = False
+        choose_intro = False #? Choose_intro is in both cases False?
     else:
         print('Please enter (y) or (n).')
 
@@ -411,53 +411,14 @@ while play_on:
     # --------------------------------------------------------------------------
     # Help / Information
     while play_help:
-        print('\nHelp still under construction.\n')                             # Insert help code here!
 
-        from colorama import Fore                                               # Test of help text
-        from colorama import Style
-        for _ in range(25):
-            print('')
-        print(f'{Fore.GREEN}DESCRIPTION{Style.RESET_ALL}')
-        print('\tExplain what PD is.')
-        print('')
-        print(f'{Fore.GREEN}GAME MODES{Style.RESET_ALL}')
-        print('\tWhat does [Play Matchups] do?')
-        print('\tWhat does [Simulate Evolution] do?')
-        print('')
-        print(f'{Fore.GREEN}RULES{Style.RESET_ALL}')
-        print('\tWhat is the matrix of payouts?')
+        import help 									# Outsourced to help.py
+        help.printHelp()
 
-        print('\t+--------------------+---------------------------------------------+')
-        print('\t|                    |                Column Player                |')
-        print('\t|                    |----------------------+----------------------+')
-        print('\t|                    |       Cooperate      |        Defect        |')
-        print('\t|                    |                      |                      |')
-        print('\t|                    |                      |                      |')
-        print('\t+--------+-----------+----------------------+----------------------+')
-        print('\t|        |           |       R=3, R=3       |       S=0, T=5       |')
-        print('\t|        | Cooperate |                      |                      |')
-        print('\t|        |           |      Reward for      | Sucker\'s payoff, and |')
-        print('\t|  Row   |           |  mutual cooperation  | temptation to defect |')
-        print('\t| Player +-----------+----------------------+----------------------+')
-        print('\t|        |           |       T=5, S=0       |       P=1, P=1       |')
-        print('\t|        |  Defect   |                      |                      |')
-        print('\t|        |           | Temptation to defect |    Punishment for    |')
-        print('\t|        |           | and sucker\'s payoff  |   mutual defection   |')
-        print('\t+--------+-----------+----------------------+----------------------+')
-
-        print(f'{Fore.GREEN}SOURCES{Style.RESET_ALL}')
-        print('\tAxelrod, R. (1984), The Evolution of Cooperation, Basic Books, NY.')
-
-        input('\nPress Enter to return to the menu.\n')
+        input('Press Enter to return to the menu.\n')
         print('Returning to menu...')
         time.sleep(1)
         play_help = False
-
-
-
-
-
-
 
 # ------------------------------------------------------------------------------
 # To Do:
