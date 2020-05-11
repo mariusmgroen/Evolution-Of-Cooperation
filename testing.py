@@ -187,6 +187,7 @@ for player_a, player_b in player_pairs:
     player_a_score = [0]
     player_b_score = [0]
     for nr_round in range(10):
+        print(player_a.strat, player_b.strat, player_a_decisions, player_b_decisions, nr_round)
         player_a_decision, player_b_decision = simulate_round(player_a.strat, player_b.strat,
                                                               player_a_decisions, player_b_decisions,
                                                               nr_round)

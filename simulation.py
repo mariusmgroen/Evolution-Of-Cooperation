@@ -3,8 +3,9 @@ import random
 import time
 import os
 from itertools import combinations
+from header import print_header
 
-# Change Directory (so that header.py runs)
+# Change Directory
 dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir)
 
@@ -141,7 +142,8 @@ while choose_intro:
     intro = input('Do you want to see the intro? (y/n) ')
     if intro=='y':
         choose_intro = False
-        os.system('python3 header.py')
+        #os.system('python3 header.py')
+        print_header()
     elif intro=='n':
         print('Ok... :(')
         choose_intro = False
@@ -253,8 +255,8 @@ while play_on:
         print(' |  Player 1:', strategies.get(strategy_a))
         print(' |  Player 2:', strategies.get(strategy_b))
         print(' |')
-        print(' |        P1   P2    .  Payoff')
-        print(' | ------------------|--------')
+        print(' |        P1   P2    |  Payoff')
+        print(' | ------------------+--------')
         for nr_round in range(nr_of_rounds):
             decision_a, decision_b = simulate_round(strategy_a, strategy_b, decisions_a, decisions_b, nr_round)
             decisions_a.append(decision_a)
@@ -318,8 +320,6 @@ while play_on:
     # Simulation
     while play_simulation:
 
-        print('\nSimulation still under construction.\n')                       # Insert simulation code here!
-
         # Choose to play another game
         choose_play_on = True
         while choose_play_on:
@@ -343,59 +343,61 @@ while play_on:
                 def update_strat(self, new_strat):
                     self.strat = new_strat
 
-            player_1 = player('A', [], [], [])
-            player_2 = player('B', [], [], [])
-            player_3 = player('C', [], [], [])
-            player_4 = player('D', [], [], [])
-            player_5 = player('E', [], [], [])
-            players = [player_1, player_2, player_3, player_4, player_5]        # Create from useful input
-            player_pairs = list(combinations(players, 2))
 
+            # Let user choose which strategies/how many players per strategy
+            # participate in the simulation
+            print('How many players of each strategy shall take place',
+                  'in the tournament?')
+            strategies_to_simulate = dict()
+            for key, value in strategies.items():
+                i = int(input(' [{0}] {1:20s}'.format(str(key),
+                                                      str(value))))
+                strategies_to_simulate[key] = i
+
+            simulated_players = []
+            for key, value in strategies_to_simulate.items():
+                for _ in range(value):
+                    simulated_players.append(player(key, [], [], []))
+            print('')
+            for i in range(len(simulated_players)):
+                print('Player ' + str(i+1) + ') ', simulated_players[i].strat)
+
+            player_pairs = list(combinations(simulated_players, 2))
+
+            rounds_to_be_simulated = 10
             for player_a, player_b in player_pairs:
-                print('\nR', player_a.strat, player_b.strat, '+ +')
+                print('\n ____{}_{}__________'.format(player_a.strat, player_b.strat))
                 player_a_decisions = []
                 player_b_decisions = []
                 player_a_score = [0]
                 player_b_score = [0]
-                for nr_round in range(10):
-                    player_a_decision, player_b_decision = simulate_round(player_a.strat, player_b.strat,
-                                                                          player_a_decisions, player_b_decisions,
+                for nr_round in range(rounds_to_be_simulated):
+                    player_a_decision, player_b_decision = simulate_round(player_a.strat,
+                                                                          player_b.strat,
+                                                                          player_a_decisions,
+                                                                          player_b_decisions,
                                                                           nr_round)
                     player_a_decisions.append(player_a_decision)
                     player_b_decisions.append(player_b_decision)
                     player_a_score, player_b_score, situation = update_score(player_a_decision,
-                                                                  player_b_decision,
-                                                                  player_a_score,
-                                                                  player_b_score,
-                                                                  nr_round)
-                    print(nr_round+1, player_a_decisions[nr_round], player_b_decisions[nr_round],
-                          player_a_score[nr_round+1], player_b_score[nr_round+1])
+                                                                             player_b_decision,
+                                                                             player_a_score,
+                                                                             player_b_score,
+                                                                             nr_round)
+
+                    print('{:>4} {} {} {:>4} {:>4}'.format(nr_round+1,
+                                                           player_a_decisions[nr_round],
+                                                           player_b_decisions[nr_round],
+                                                           player_a_score[nr_round+1],
+                                                           player_b_score[nr_round+1]))
                 player_a.update_score(player_a_score)
                 player_b.update_score(player_b_score)
                 player_a.update_decisions_own(player_a_decisions)
                 player_b.update_decisions_own(player_b_decisions)
 
-            # Let user choose which strategies/how many players per strategy
-            # participate in the simulation
-#            print('How many players of each strategy shall take place',
-#                  'in the tournament?')
-#            strategies_to_simulate = dict()
-#            for key, value in strategies.items():
-#                i = int(input(' [{0}] {1:20s}'.format(str(key),
-#                                                      str(value))))
-#                strategies_to_simulate[value] = i
-#
-#            print(strategies_to_simulate)                                       # Delete Control !
-#            print(sum(strategies_to_simulate.values()))                         # Delete Control !
-#
-#            simulated_players = []
-#            for key, value in strategies_to_simulate.items():
-#                for _ in range(value):
-#                    simulated_players.append(SimulatedPlayer(key))
-#            for i in range(len(simulated_players)):
-#                print('Player ' + str(i+1) + ') ', simulated_players[i].sim_strategy)
 
-
+            for i in simulated_players:
+                print(i.show_score())
 
             chosen_play_on = input('Do you want to simulate another round? (y/n) ')
             if chosen_play_on == 'y' or chosen_play_on == 'Y':
@@ -411,42 +413,12 @@ while play_on:
     # --------------------------------------------------------------------------
     # Help / Information
     while play_help:
-        print('\nHelp still under construction.\n')                             # Insert help code here!
 
-        from colorama import Fore                                               # Test of help text
+        from colorama import Fore
         from colorama import Style
-        for _ in range(25):
-            print('')
-        print(f'{Fore.GREEN}DESCRIPTION{Style.RESET_ALL}')
-        print('\tExplain what PD is.')
-        print('')
-        print(f'{Fore.GREEN}GAME MODES{Style.RESET_ALL}')
-        print('\tWhat does [Play Matchups] do?')
-        print('\tWhat does [Simulate Evolution] do?')
-        print('')
-        print(f'{Fore.GREEN}RULES{Style.RESET_ALL}')
-        print('\tWhat is the matrix of payouts?')
 
-        print('\t+--------------------+---------------------------------------------+')
-        print('\t|                    |                Column Player                |')
-        print('\t|                    |----------------------+----------------------+')
-        print('\t|                    |       Cooperate      |        Defect        |')
-        print('\t|                    |                      |                      |')
-        print('\t|                    |                      |                      |')
-        print('\t+--------+-----------+----------------------+----------------------+')
-        print('\t|        | Cooperate |       R=3, R=3       |       S=0, T=5       |')
-        print('\t|   Row  |           |                      |                      |')
-        print('\t| Player |           |      Reward for      | Sucker\'s payoff, and |')
-        print('\t|        |           |  mutual cooperation  | temptation to defect |')
-        print('\t+--------+-----------+----------------------+----------------------+')
-        print('\t|        | Defect    |       T=5, S=0       |       P=1, P=1       |')
-        print('\t|        |           |                      |                      |')
-        print('\t|        |           | Temptation to defect |    Punishment for    |')
-        print('\t|        |           |  and sucker\'s payoff |   mutual defection   |')
-        print('\t+--------+-----------+----------------------+----------------------+')
-
-        print(f'{Fore.GREEN}SOURCES{Style.RESET_ALL}')
-        print('\tAxelrod, R. (1984), The Evolution of Cooperation, Basic Books, NY.')
+        from help import print_help
+        print_help()
 
         input('\nPress Enter to return to the menu.\n')
         print('Returning to menu...')
